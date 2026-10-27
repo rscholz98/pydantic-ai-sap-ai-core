@@ -1,0 +1,7 @@
+pydantic-ai-sap-ai-core
+Copyright (c) 2026 Richard Scholz
+
+This repository vendors recorded API responses under tests/fixtures/sap_ai_sdk_js/ that are
+Copyright 2024 SAP SE or an SAP affiliate company and ai-sdk-js contributors, licensed under the
+Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0). They are taken from
+https://github.com/SAP/ai-sdk-js and are used solely as test fixtures.

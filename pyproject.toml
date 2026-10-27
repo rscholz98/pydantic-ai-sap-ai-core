@@ -1,0 +1,101 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "pydantic-ai-sap-ai-core"
+version = "0.1.0"
+description = "SAP AI Core (Generative AI Hub) provider for Pydantic AI"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE", "NOTICE"]
+authors = [{ name = "Richard Scholz" }]
+requires-python = ">=3.11"
+keywords = ["pydantic-ai", "sap", "sap-ai-core", "generative-ai-hub", "btp", "llm", "agents"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Typing :: Typed",
+]
+dependencies = [
+    "pydantic-ai-slim[openai]>=2.57",
+    "httpx2>=2.7",
+    "anyio>=4",
+]
+
+[project.urls]
+Homepage = "https://github.com/rscholz98/pydantic-ai-sap-ai-core"
+Repository = "https://github.com/rscholz98/pydantic-ai-sap-ai-core"
+Issues = "https://github.com/rscholz98/pydantic-ai-sap-ai-core/issues"
+
+[dependency-groups]
+dev = [
+    "pytest>=8",
+    "pytest-cov>=5",
+    "inline-snapshot>=0.20",
+    "ruff>=0.12",
+    "pyright>=1.1.400",
+    "dirty-equals>=0.11",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["pydantic_ai_sap_ai_core"]
+
+[tool.hatch.build.targets.sdist]
+include = ["pydantic_ai_sap_ai_core", "tests", "README.md", "LICENSE", "NOTICE"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "Q", "UP", "I", "D", "C90", "RUF100", "BLE001", "PGH003"]
+ignore = ["D100", "D104", "D105", "D107"]
+mccabe = { max-complexity = 14 }
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = ["D"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.flake8-quotes]
+inline-quotes = "single"
+multiline-quotes = "double"
+
+[tool.ruff.format]
+quote-style = "single"
+docstring-code-format = true
+
+[tool.pyright]
+pythonVersion = "3.11"
+typeCheckingMode = "strict"
+include = ["pydantic_ai_sap_ai_core", "tests"]
+reportUnnecessaryTypeIgnoreComment = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+xfail_strict = true
+filterwarnings = ["error"]
+addopts = ["-p", "anyio"]
+anyio_mode = "auto"
+
+[tool.inline-snapshot]
+format-command = "ruff format --stdin-filename {filename}"
+
+[tool.coverage.run]
+source = ["pydantic_ai_sap_ai_core"]
+branch = true
+
+[tool.coverage.report]
+fail_under = 100
+show_missing = true
+exclude_also = ["if TYPE_CHECKING:", "@overload", "raise NotImplementedError"]
