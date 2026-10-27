@@ -112,7 +112,9 @@ class DeploymentResolver:
         try:
             listing = _DeploymentList.model_validate_json(response.content)
         except ValidationError as e:
-            raise UserError(f'The SAP AI Core deployment listing could not be parsed: {validation_summary(e)}') from e
+            raise UserError(
+                f'The SAP AI Core deployment listing could not be parsed: {validation_summary(e)}'
+            ) from None
 
         by_model: dict[str, Deployment] = {}
         for resource in sorted(listing.resources, key=lambda r: r.created_at, reverse=True):

@@ -175,7 +175,7 @@ class SapAiCoreAuth(httpx2.Auth):
             raise UserError(
                 f'The SAP AI Core token response from {self.credentials.auth_url} is not a valid token: '
                 f'{validation_summary(e)}'
-            ) from e
+            ) from None  # the cause would carry the response body
         self._token = token = _Token(payload.access_token, time.monotonic() + payload.expires_in)
         return token
 
