@@ -103,9 +103,16 @@ def test_service_key_env_var(clean_env: pytest.MonkeyPatch):
 
 
 def test_service_key_env_var_malformed(clean_env: pytest.MonkeyPatch):
-    clean_env.setenv('AICORE_SERVICE_KEY', '{"clientid": 1}')
-    with pytest.raises(UserError, match='`AICORE_SERVICE_KEY` environment variable is not a valid service key'):
+    clean_env.setenv('AICORE_SERVICE_KEY', '{"clientid": 1, "clientsecret": ["top-secret"]}')
+    with pytest.raises(UserError) as exc_info:
         load_credentials()
+    message = str(exc_info.value)
+    assert message == (
+        'The SAP AI Core `AICORE_SERVICE_KEY` environment variable is not a valid service key: '
+        'clientid: Input should be a valid string; clientsecret: Input should be a valid string'
+    )
+    # The offending values are never echoed: they may be secrets.
+    assert 'top-secret' not in message
 
 
 def test_service_key_argument_takes_precedence_over_env(clean_env: pytest.MonkeyPatch):

@@ -30,4 +30,6 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - run: uv sync --dev
-      - run: uv run pytest --cov --cov-report=term-missing
+      # Branch coverage of `yield` inside `async with` is mis-attributed by the 3.11 tracer, so the
+      # 100% gate runs on the `sys.monitoring`-based tracer of 3.12 and later only.
+      - run: uv run pytest ${{ matrix.python-version != '3.11' && '--cov --cov-report=term-missing' || '' }}

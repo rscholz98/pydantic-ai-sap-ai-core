@@ -119,10 +119,11 @@ async def test_token_endpoint_failure(sap: MockSap):
 
 
 async def test_token_response_without_access_token(sap: MockSap):
-    sap.token_responses = [httpx2.Response(200, json={'token_type': 'bearer'})]
+    sap.token_responses = [httpx2.Response(200, json={'token_type': 'bearer', 'id_token': 'leaky'})]
     async with client(sap) as http:
-        with pytest.raises(UserError, match='is not a valid token'):
+        with pytest.raises(UserError, match='is not a valid token: access_token: Field required$') as exc_info:
             await http.post(CHAT_URL, json={'model': 'gpt-4o'})
+    assert 'leaky' not in str(exc_info.value)
 
 
 async def test_token_response_without_expires_in_defaults_to_an_hour(sap: MockSap, monkeypatch: pytest.MonkeyPatch):
@@ -246,7 +247,7 @@ async def test_listing_failure(sap: MockSap):
 async def test_listing_unparseable(sap: MockSap):
     sap.deployments = [{'id': 42}]  # a resource whose id is not a string
     async with client(sap) as http:
-        with pytest.raises(UserError, match='deployment listing could not be parsed'):
+        with pytest.raises(UserError, match='could not be parsed: resources.0.id: Input should be a valid string$'):
             await http.post(CHAT_URL, json={'model': 'gpt-4o'})
 
 

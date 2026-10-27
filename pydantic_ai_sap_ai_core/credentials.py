@@ -17,6 +17,8 @@ from typing import Any
 from pydantic import BaseModel, Field, TypeAdapter, ValidationError
 from pydantic_ai.exceptions import UserError
 
+from ._errors import validation_summary
+
 __all__ = (
     'DEFAULT_RESOURCE_GROUP',
     'SapAiCoreCredentials',
@@ -211,7 +213,7 @@ def _parse_service_key(service_key: str | Mapping[str, Any], *, source: str) -> 
             return _service_key_adapter.validate_json(service_key)
         return _service_key_adapter.validate_python(service_key)
     except ValidationError as e:
-        raise UserError(f'The SAP AI Core {source} is not a valid service key: {e}') from e
+        raise UserError(f'The SAP AI Core {source} is not a valid service key: {validation_summary(e)}') from e
 
 
 def _service_key_source(service_key: str | Mapping[str, Any] | None) -> dict[str, str]:
@@ -235,7 +237,7 @@ def _load_config_file() -> dict[str, Any]:
     try:
         return _config_adapter.validate_json(path.read_bytes())
     except ValidationError as e:
-        raise UserError(f'The SAP AI Core config file {path} must hold a JSON object: {e}') from e
+        raise UserError(f'The SAP AI Core config file {path} must hold a JSON object: {validation_summary(e)}') from e
 
 
 def _config_value(config: Mapping[str, Any], name: str) -> str | None:

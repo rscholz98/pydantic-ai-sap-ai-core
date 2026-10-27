@@ -27,6 +27,7 @@ from pydantic import BaseModel, TypeAdapter, ValidationError
 from pydantic_ai.exceptions import UserError
 
 from ._deployments import OPENAI_EXECUTABLE, DeploymentResolver
+from ._errors import validation_summary
 from .credentials import SapAiCoreCredentials
 
 __all__ = ('MODEL_PLACEHOLDER', 'SapAiCoreAuth')
@@ -172,7 +173,8 @@ class SapAiCoreAuth(httpx2.Auth):
             payload = _TokenResponse.model_validate_json(response.content)
         except ValidationError as e:
             raise UserError(
-                f'The SAP AI Core token response from {self.credentials.auth_url} is not a valid token: {e}'
+                f'The SAP AI Core token response from {self.credentials.auth_url} is not a valid token: '
+                f'{validation_summary(e)}'
             ) from e
         self._token = token = _Token(payload.access_token, time.monotonic() + payload.expires_in)
         return token
