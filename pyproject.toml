@@ -63,6 +63,7 @@ mccabe = { max-complexity = 14 }
 
 [tool.ruff.lint.per-file-ignores]
 "tests/**/*.py" = ["D"]
+"scripts/**/*.py" = ["D"]
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
