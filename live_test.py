@@ -93,6 +93,10 @@ async def main() -> int:
     print(f'credentials: {credential_source()}')
     creds = load_credentials()
     print(f'base_url:    {creds.base_url}')
+    print(f'auth_url:    {creds.auth_url}')
+    print(f'client_id:   {creds.client_id}')
+    secret = creds.client_secret
+    print(f'secret:      {len(secret)} chars, starts {secret[:2]!r}, ends {secret[-2:]!r}')
     print(f'resource group: {creds.resource_group}')
 
     # 1. token + deployments, by hand, so a failure here is easy to read
@@ -102,6 +106,8 @@ async def main() -> int:
         )
         if r.status_code != 200:
             print(f'token FAILED {r.status_code}: {r.text[:1000]}')
+            print('check the same credentials outside Python:')
+            print(f"  curl -s -u '{creds.client_id}:<secret>' -d grant_type=client_credentials '{creds.auth_url}'")
             return 1
         token = r.json()['access_token']
         print('token:       ok')
